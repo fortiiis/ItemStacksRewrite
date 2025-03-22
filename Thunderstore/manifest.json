@@ -1,6 +1,6 @@
 {
   "name": "ItemStacksRewrite",
-  "version_number": "1.0.0",
+  "version_number": "1.0.1",
   "website_url": "https://github.com/fortiiis/ItemStacksRewrite",
   "description": "Rewrite of the popular ItemStacks mod by MTNewton",
   "dependencies": [
