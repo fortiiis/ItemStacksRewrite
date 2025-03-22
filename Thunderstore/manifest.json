@@ -1,0 +1,9 @@
+{
+  "name": "ItemStacksRewrite",
+  "version_number": "1.0.0",
+  "website_url": "https://github.com/fortiiis/ItemStacksRewrite",
+  "description": "Rewrite of the popular ItemStacks mod by MTNewton",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.2202"
+  ]
+}

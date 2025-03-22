@@ -18,7 +18,7 @@ public class ItemStacksRewrite : BaseUnityPlugin
 {
     const string pluginGUID = "fortis.mods.itemstacksrewrite";
     const string pluginName = "ItemStacksRewrite";
-    const string pluginVersion = "1.0";
+    const string pluginVersion = "1.0.1";
 
     private static ItemStacksRewrite _instance;
 
