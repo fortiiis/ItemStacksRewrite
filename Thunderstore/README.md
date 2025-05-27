@@ -9,6 +9,7 @@ Differences between old mod:
 - Server compatibility using [ServerSync](https://github.com/blaxxun-boop/ServerSync) by Blaxxun
 - Cleaner configurations, separate files
 - The old mod had things like "Abomination_attack3" in the weights section, this is due to how the mod was setup and Valheim itself. This rewrite cleans up the configs and removes unnecessary AI items that the player will never obtain.
+- Toggleable utility item support (Wishbone, Megingjord, Wisplight, etc...). This is for more mod compatibility with mods that may change these items.
 - Toggleable mod item support. The old mod had support but wasn't toggleable. NOTE* If you disable mod items after generating the config entries, the entries will stay in the config file but will not be applied to modded items. You can re-generate the file with it false by deleting the file and re-loading into a world.
 
 I do not take credit for the original mod idea or work done by MTNewton. This re-write has changed much of the original source code
