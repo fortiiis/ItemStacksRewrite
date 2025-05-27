@@ -18,9 +18,7 @@ public class ItemStacksRewrite : BaseUnityPlugin
 {
     const string pluginGUID = "fortis.mods.itemstacksrewrite";
     const string pluginName = "ItemStacksRewrite";
-    const string pluginVersion = "1.0.1";
-
-    private static ItemStacksRewrite _instance;
+    const string pluginVersion = "1.0.2";
 
     private static readonly string ISRConfigPath = $"{Path.Combine(Paths.ConfigPath, "ItemStacksRewrite")}";
     private static ConfigFile ISRStacksConfig;
@@ -67,6 +65,8 @@ public class ItemStacksRewrite : BaseUnityPlugin
     private static ConfigEntry<bool> EnableWeightMultiplier;
     private static ConfigEntry<float> WeightMultiplier;
     private static ConfigEntry<bool> EnableModded;
+    private static ConfigEntry<bool> EnableUtilityStacks;
+    private static ConfigEntry<bool> EnableUtilityWeights;
 
     // Debug Config
     private static ConfigEntry<bool> EnableDebug;
@@ -93,15 +93,13 @@ public class ItemStacksRewrite : BaseUnityPlugin
     public void Awake()
     {
         Log("Initializing...");
-        _instance = this;
         _harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), pluginGUID);
         BindConfigs();
         Log("Initialized.");
     }
 
-    private void OnDestroy()
+    public void OnDestroy()
     {
-        _instance = null;
         _harmony.UnpatchSelf();
     }
 
@@ -126,6 +124,11 @@ public class ItemStacksRewrite : BaseUnityPlugin
         EnableModded = CreateSyncedGConfig("2 - General", "EnableModded", true, new ConfigDescription("If enabled, mod will add config entries for modded items. Disabling this may improve server load and loading world performance. " +
             "If disabling after modded items have already been added, modded items will stay but not be used until you delete file and regenerate it"));
         EnableModded.SettingChanged += ServerSync_SettingChanged;
+        EnableUtilityStacks = CreateSyncedGConfig("2 - General", "EnableUtilityStacks", true, new ConfigDescription("If enabled, mod will allow stacking of utility items (Megingjord, Wisplight, Wishbone, etc..."));
+        EnableUtilityStacks.SettingChanged += ServerSync_SettingChanged;
+        EnableUtilityWeights = CreateSyncedGConfig("2 - General", "EnableUtilityWeights", true, new ConfigDescription("If enabled, mod will allow setting weights of utility items (Megingjord, Wisplight, Wishbone, etc...)"));
+        EnableUtilityWeights.SettingChanged += ServerSync_SettingChanged;
+
         EnableDebug = Config.Bind("3 - Debug", "EnableDebug", false, new ConfigDescription("Enable this to print more logging information to the console."));
 
         if (!Directory.Exists(ISRConfigPath))
@@ -215,7 +218,7 @@ public class ItemStacksRewrite : BaseUnityPlugin
                 if (EnableStacks.Value)
                 {
                     bool isValidItem = itemDrop.m_itemData.m_shared.m_maxStackSize > 1;
-                    if (itemDrop.m_itemData.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Utility)
+                    if (itemDrop.m_itemData.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Utility && EnableUtilityStacks.Value)
                         isValidItem = true;
 
                     if (isValidItem)
@@ -239,6 +242,10 @@ public class ItemStacksRewrite : BaseUnityPlugin
                 }
                 if (EnableWeights.Value)
                 {
+                    // If item is utility and utility weight is not enabled, skip
+                    if (itemDrop.m_itemData.m_shared.m_itemType == ItemDrop.ItemData.ItemType.Utility && !EnableUtilityWeights.Value)
+                        continue;
+
                     if (!ItemWeights.TryGetValue($"{item.name}_weight", out ConfigEntry<float> config))
                     {
                         Log($"Creating/Getting weight config for item: {item.name}, original weight: {item.GetComponent<ItemDrop>().m_itemData.m_shared.m_weight}", true);
